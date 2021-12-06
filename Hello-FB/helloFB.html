@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>파이썬 프로젝트 기말과제</title>
+</head>
+
+<style>
+    button,
+    button::after {
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        -o-transition: all 0.3s;
+        transition: all 0.3s;
+    }
+
+    button {
+        background: none;
+        border: 3px solid salmon;
+        border-radius: 5px;
+        color: salmon;
+        display: block;
+        font-size: 1.6em;
+        font-weight: bold;
+        margin: 1em auto;
+        padding: 2em 6em;
+        position: relative;
+        text-transform: uppercase;
+
+    }
+
+    button::before,
+    button::after {
+        background: salmon;
+        content: '';
+        position: absolute;
+        z-index: -1;
+    }
+
+    button:hover {
+        color: black;
+    }
+
+    .led_on::after {
+        height: 0;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .led_on:hover:after {
+        height: 100%;
+    }
+
+
+    .led_off::after {
+        height: 100%;
+        left: 0;
+        top: 0;
+        width: 0;
+    }
+
+    .led_off:hover:after {
+        width: 100%;
+    }
+</style>
+
+
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-analytics.js";
+    import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js";
+    // Import the functions you need from the SDKs you need
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+
+    // firebase API 키를 변수로 지정
+    const firebaseConfig = {
+        apiKey: "AIzaSyCTFkwqqapmRNIxdzvxh3fZLPQNzM0tmik",
+        authDomain: "hello-fb-ca6bf.firebaseapp.com",
+        databaseURL: "https://hello-fb-ca6bf-default-rtdb.firebaseio.com",
+        projectId: "hello-fb-ca6bf",
+        storageBucket: "hello-fb-ca6bf.appspot.com",
+        messagingSenderId: "1022640810907",
+        appId: "1:1022640810907:web:bcdf31999cde8fb160cf3e",
+        measurementId: "G-45Q00SHNKK"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+    console.log(db);
+
+    const dbRef = ref(db, 'LED_STATUS');
+
+    const onImg = "/Users/leunbi/Desktop/Hello-FB/led_ON.png";
+    const offImg = "/Users/leunbi/Desktop/Hello-FB/led_Off.png";
+    const firstImg = offImg;
+
+    //  버튼 눌렀을 때 실행될 함수들
+    function onBtnClick(event) {
+        set(ref(db, 'LED_STATUS'), 'ON');
+        console.log("LED ON");
+        document.getElementById('img').src = onImg;
+    }
+
+    function offBtnClick(event) {
+        set(ref(db, 'LED_STATUS'), 'OFF');
+        console.log("LED OFF");
+        document.getElementById('img').src = offImg;
+
+    }
+
+    var onButton = document.getElementById("led_on");
+    onButton.addEventListener("click", onBtnClick);
+
+
+    var offButton = document.getElementById("led_off");
+    offButton.addEventListener("click", offBtnClick);
+
+
+
+    onValue(dbRef, (snapshot) => {
+        console.log(snapshot.val());
+        bigOne.innerText = 'LED is ' + snapshot.val();
+    })
+
+
+</script>
+
+
+<body>
+    <div style="text-align: center; font-size: 140%;">
+        <h1>파이썬 프로젝트 기말과제</h1>
+    </div>
+    <div style="text-align: center; font-size: 60%;">
+        <h1>202075390 이은비</h1>
+    </div>
+    <div style="text-align: center; font-size: 130%; color: salmon;">
+        <h2 id="bigOne"></h2>
+    </div>
+
+    <div style="flex-direction: row; display: flex;">
+
+        <button class="led_on" id="led_on">LED ON</button>
+        <button class="led_off" id="led_off">LED OFF</button>
+
+    </div>
+
+
+    <div id="led_img" style="justify-content: center; display: flex;">
+        <img style="width: 20%; height: 20%;" id="img" src='/Users/leunbi/Desktop/Hello-FB/led_Off.png'></img>
+    </div>
+
+
+</body>
+
+</html>
